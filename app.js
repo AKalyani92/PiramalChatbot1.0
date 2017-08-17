@@ -2,7 +2,7 @@
 var restify = require('restify');
 var builder = require('botbuilder');
 var request = require('request');
-var o = require('odata');
+//var o = require('odata');
 
 // Setup Restify Server
 var server = restify.createServer();
@@ -88,4 +88,120 @@ function RootMenu(session,results) {
     }
 }
 
+bot.dialog('/Analytics',[
+    function (session,args) {
+        builder.Prompts.choice(session,"Please select a dashboard","CPO Dashboard|Supplier Visibility|Manager Dashboard|Supplier Compliance",
+        {
+            listStyle: builder.ListStyle.button,
+            maxRetries: 2,
+            retryPrompt: 'Please Provide analytics dashboard'
+        });
+    },
+    function (session,results) {
+        if (results.response == undefined) {
+            session.endDialog();
+            session.replaceDialog('/');
+        }
+        else {
+            var option = results.response.entity;
+            var cards = {};
+            if (option.toUpperCase().indexOf("CPO") !== -1) {
+                cards = CreateCPOCards();
+            }
+            else if (option.toUpperCase().indexOf("VISIBILITY") !== -1) {
+                cards = CreateSupplierVisibilityCards();
+            }
+            else if (option.toUpperCase().indexOf("MANAGER") !== -1) {
+                cards = CreateManagerDashboardCards();
+            }
+            else if (option.toUpperCase().indexOf("COMPLIANCE") !== -1) {
+                cards = CreateSupplierComplianceCards();
+            }
+
+            var reply =
+                new builder.Message()
+                    .attachmentLayout(builder.AttachmentLayout.carousel)
+                    .attachments(cards);
+
+            session.send(reply);
+
+            session.beginDialog('/ConversationEnd');
+        }
+    },
+    function (session,results) {
+        session.endDialogWithResult(results);
+    }
+])
+
+
+bot.dialog('/ConversationEnd',[
+    function (session) {
+        session.conversationData  = {};
+        builder.Prompts.text(session, 'Would you like to see another dashboard?');
+    }
+]);
+
+//check if reset/exit
+bot.dialog('/Reset', [
+    function (session,response) {
+        session.beginDialog('/');
+    }
+])
+
+// To Clear user Data cache
+bot.dialog('/ClearData', [
+    function (session) {
+        session.userData.isVerified = false;
+        session.beginDialog('/ConversationEnd');
+    }
+]);
+
+function CreateCPOCards(session) {
+    return[
+        CreateCard(session, 'SpendAnalytics','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/SpendTrend.PNG'),
+        CreateCard(session,'Top 10 Companies','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/T10Companies.PNG'),
+        CreateCard(session,'Top 10 Suppliers','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/T10Suppliers.PNG'),
+        CreateCard(session,'Top 10 Spend Analytics','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/T10SpendCategories.PNG')
+    ];
+}
+
+function CreateSupplierVisibilityCards(session) {
+    return[
+        CreateCard(session,'Top 10 Materials','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/T10Materials.PNG'),
+        CreateCard(session,'Top 10 Plants','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/T10Plant.PNG'),
+        CreateCard(session,'Top 10 Suppliers','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/T10Suppliers2.PNG')
+    ];
+}
+
+function CreateManagerDashboardCards(session) {
+    return[
+        CreateCard(session,'Direct vs Indirect','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/DIRECTvsINDIRECT.PNG'),
+        CreateCard(session,'Non Po Profiling','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/NON_PO_PROFILING.PNG'),
+        CreateCard(session,'Off Contract Profiling','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/OFF_CONTRACT_PROFILING.PNG'),
+        CreateCard(session,'Payment Term Inconsistencies','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/PAYMENT_TERM_INCONSISTENCIES.PNG'),
+        CreateCard(session,'After The Fact Spend','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/AFTER_THE_FACT_SPEND.PNG')
+    ];
+}
+
+function CreateSupplierComplianceCards(session) {
+    return[
+        CreateCard(session,'Actual vs Budgeted','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/ACTUALvsBUDGETED.PNG'),
+        CreateCard(session,'Direct vs Indirect','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/DIRECTvsINDIRECT2.PNG'),
+        CreateCard(session,'Send Category Analysis','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/SENDCATEGORY_ANALYSIS.PNG')
+    ];
+}
+
+function CreateCard(session,title,text,subtitle,imageURL) {
+    return new builder.HeroCard(session)
+        .title(title)
+        /*.subtitle(subtitle)
+         .text(text)*/
+        .images([
+            builder.CardImage.create(session, imageURL)
+        ])
+        .buttons([
+            builder.CardAction.openUrl(session, imageURL, 'See More')
+            /*,builder.CardAction.openUrl(session, 'http://neo.bcone.com/sense/app/edc8d0e8-ce10-4160-9ba7-25b63904c653/sheet/JkmJaP/state/analysis', 'Go To')*/
+        ])
+}
 
