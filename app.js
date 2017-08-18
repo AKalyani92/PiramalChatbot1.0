@@ -90,7 +90,7 @@ function RootMenu(session,results) {
 
 bot.dialog('/Analytics',[
     function (session,args) {
-        builder.Prompts.choice(session,"Please select a dashboard","CPO Dashboard|Supplier Visibility|Manager Dashboard|Supplier Compliance",
+        builder.Prompts.choice(session,"Please select a dashboard","FTM and YTD Analysis|Headcount and Spend Overview|Headcount Details|Headcount Overview|Top N Analysis",
         {
             listStyle: builder.ListStyle.button,
             maxRetries: 2,
@@ -105,17 +105,20 @@ bot.dialog('/Analytics',[
         else {
             var option = results.response.entity;
             var cards = {};
-            if (option.toUpperCase().indexOf("CPO") !== -1) {
+            if (option.toUpperCase().indexOf("FTM AND YTD ANALYSIS") !== -1) {
                 cards = CreateCPOCards();
             }
-            else if (option.toUpperCase().indexOf("VISIBILITY") !== -1) {
+            else if (option.toUpperCase().indexOf("HEADCOUNT AND SPEND OVERVIEW") !== -1) {
                 cards = CreateSupplierVisibilityCards();
             }
-            else if (option.toUpperCase().indexOf("MANAGER") !== -1) {
+            else if (option.toUpperCase().indexOf("HEADCOUNT DETAILS") !== -1) {
                 cards = CreateManagerDashboardCards();
             }
-            else if (option.toUpperCase().indexOf("COMPLIANCE") !== -1) {
+            else if (option.toUpperCase().indexOf("HEADCOUNT OVERVIEW") !== -1) {
                 cards = CreateSupplierComplianceCards();
+            }
+            else if (option.toUpperCase().indexOf("TOP N ANALYSIS") !== -1) {
+                cards = CreateNAnalysisCards();
             }
 
             var reply =
@@ -158,38 +161,44 @@ bot.dialog('/ClearData', [
 
 function CreateCPOCards(session) {
     return[
-        CreateCard(session, 'SpendAnalytics','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/SpendTrend.PNG'),
-        CreateCard(session,'Top 10 Companies','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/T10Companies.PNG'),
-        CreateCard(session,'Top 10 Suppliers','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/T10Suppliers.PNG'),
-        CreateCard(session,'Top 10 Spend Analytics','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/T10SpendCategories.PNG')
+        CreateCard(session, 'Headcount: Actual vs Budgeted  FTM ','Sample Text for demo','sample subtitle','https://s3.ap-south-1.amazonaws.com/piramalchatbot/Ftm+and+YTD+analysis/actual+vs+budgeted+headcount+FTM+Mar+2016-1.png'),
+        CreateCard(session,'Headcount: Actual vs Budgeted  YTD','Sample Text for demo','sample subtitle','https://s3.ap-south-1.amazonaws.com/piramalchatbot/Ftm+and+YTD+analysis/actual+vs+budgeted+headcount+YTD-2.png'),
+        CreateCard(session,'Spend: Actual vs Budgeted  FTM Mar 2016','Sample Text for demo','sample subtitle','https://s3.ap-south-1.amazonaws.com/piramalchatbot/Ftm+and+YTD+analysis/actual+vs+budgeted+Spend+FTM+Mar+2016-+3.png'),
+        CreateCard(session,'Spend: Actual vs Budgeted  YTD Details','Sample Text for demo','sample subtitle','https://s3.ap-south-1.amazonaws.com/piramalchatbot/Ftm+and+YTD+analysis/actual+vs+budgeted+Spend+YTD+Details+4.png')
     ];
 }
 
 function CreateSupplierVisibilityCards(session) {
     return[
-        CreateCard(session,'Top 10 Materials','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/T10Materials.PNG'),
-        CreateCard(session,'Top 10 Plants','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/T10Plant.PNG'),
-        CreateCard(session,'Top 10 Suppliers','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/T10Suppliers2.PNG')
-    ];
+        CreateCard(session, 'Monthly Trend: Consolidated Spend and Headcount ','Sample Text for demo','sample subtitle','https://s3.ap-south-1.amazonaws.com/piramalchatbot/Headcount+and+spend+overview/Consolidated+Spend+and+headcount+Monthly+trend-1.png'),
+        CreateCard(session,'Spend and Headcounts by Employee Function','sample subtitle','Sample Text for demo','https://s3.ap-south-1.amazonaws.com/piramalchatbot/Headcount+and+spend+overview/Spend+and+Headcounts+by+employee+Function.png')
+       ];
 }
 
 function CreateManagerDashboardCards(session) {
     return[
-        CreateCard(session,'Direct vs Indirect','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/DIRECTvsINDIRECT.PNG'),
-        CreateCard(session,'Non Po Profiling','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/NON_PO_PROFILING.PNG'),
-        CreateCard(session,'Off Contract Profiling','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/OFF_CONTRACT_PROFILING.PNG'),
-        CreateCard(session,'Payment Term Inconsistencies','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/PAYMENT_TERM_INCONSISTENCIES.PNG'),
-        CreateCard(session,'After The Fact Spend','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/AFTER_THE_FACT_SPEND.PNG')
-    ];
+        CreateCard(session,'Spend: Period Analysis- Actual vs Budgeted vs Previous Year','Sample Text for demo','sample subtitle','https://s3.ap-south-1.amazonaws.com/piramalchatbot/Headcount+Details/Actual+vs+budget+vs+previous+yr-1.png'),
+        CreateCard(session,'Headcount:Period Analysis- Actual vs Budgeted vs Previous Year','Sample Text for demo','sample subtitle','https://s3.ap-south-1.amazonaws.com/piramalchatbot/Headcount+Details/Actual+vs+budget+vs+previous+y+yr-2.png'),
+        CreateCard(session,'Spend: Business Wise Allocation  % Details','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/OFF_CONTRACT_PROFILING.PNG')
+            ];
 }
 
 function CreateSupplierComplianceCards(session) {
     return[
-        CreateCard(session,'Actual vs Budgeted','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/ACTUALvsBUDGETED.PNG'),
-        CreateCard(session,'Direct vs Indirect','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/DIRECTvsINDIRECT2.PNG'),
-        CreateCard(session,'Send Category Analysis','Sample Text for demo','sample subtitle','https://cuianalytics.blob.core.windows.net/c1analytics/SENDCATEGORY_ANALYSIS.PNG')
+        CreateCard(session,'Headcount Office Wise: Actual vs Budgeted','Sample Text for demo','sample subtitle','https://s3.ap-south-1.amazonaws.com/piramalchatbot/Headcount+overview/Actual+vs+Budgeted+Headcou+1.png'),
+        CreateCard(session,'Headcount Period Wise: Actual vs Budgeted','Sample Text for demo','sample subtitle','https://s3.ap-south-1.amazonaws.com/piramalchatbot/Headcount+overview/Actual+vs+Budgeted+Headcount+by+period+2.png'),
+        CreateCard(session,'Spend Share By Site, Business and Employee Function','Sample Text for demo','sample subtitle','https://s3.ap-south-1.amazonaws.com/piramalchatbot/Headcount+overview/Spend+Share+by+SIte%2C+Business+and+Employee+-3.png')
+            ];
+}
+
+function CreateNAnalysisCards(session){
+    return[
+        CreateCard(session,'Top 10 Spend by site','Sample Text for demo','sample subtitle','https://s3.ap-south-1.amazonaws.com/piramalchatbot/Top+NAnalysis/Top+10+Spend+by+site-1.png'),
+        CreateCard(session,'Top 10 Spend by Business','Sample Text for demo','sample subtitle','https://s3.ap-south-1.amazonaws.com/piramalchatbot/Top+NAnalysis/Top+10+Spend+by+Business+-2.png'),
+        CreateCard(session,'Top 10 Spend by Employee, Business and Employee Function','Sample Text for demo','sample subtitle','https://s3.ap-south-1.amazonaws.com/piramalchatbot/Top+NAnalysis/Top+10+Spend+by+Employee+-3.png')
     ];
 }
+
 
 function CreateCard(session,title,text,subtitle,imageURL) {
     return new builder.HeroCard(session)
