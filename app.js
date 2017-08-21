@@ -52,6 +52,7 @@ Date.prototype.addDays = function(days) {
 // Root dialog for entry point in application
 bot.dialog('/', [
     function (session,args, next) {
+        console.log("In Main");
         result = args || {};
         if (result == undefined || result.response == undefined) {
             userAddress = session.message.address;
@@ -63,6 +64,30 @@ bot.dialog('/', [
     },
     function (session, results) {
 
+        RootMenu(session,results);
+    },
+    function (session,results) {
+        console.log("root final : " + results.response);
+        RootMenu(session,results);
+    },
+    function (session,results) {
+        console.log("root final : " + results.response);
+        RootMenu(session,results);
+    },
+    function (session,results) {
+        console.log("root final : " + results.response);
+        RootMenu(session,results);
+    },
+    function (session,results) {
+        console.log("root final : " + results.response);
+        RootMenu(session,results);
+    },
+    function (session,results) {
+        console.log("root final : " + results.response);
+        RootMenu(session,results);
+    },
+    function (session,results) {
+        console.log("root final : " + results.response);
         RootMenu(session,results);
     },
     function (session,results) {
@@ -95,7 +120,7 @@ bot.dialog('/Analytics',[
         {
             listStyle: builder.ListStyle.button,
             maxRetries: 2,
-            retryPrompt: 'Please Provide analytics dashboard'
+            retryPrompt: 'Please Provide Dashboard'
         });
     },
     function (session,results) {
