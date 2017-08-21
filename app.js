@@ -58,7 +58,7 @@ bot.dialog('/', [
             builder.Prompts.text(session, "Hi " + session.message.user.name + " How can i help you?");
         }
         else if (result.response == "NU") {
-            builder.Prompts.text(session, "You can say : 'Analytics'");
+            builder.Prompts.text(session, "You can say : 'Headcount'");
         }
     },
     function (session, results) {
@@ -73,7 +73,7 @@ bot.dialog('/', [
 
 function RootMenu(session,results) {
 
-    if (results.response.toUpperCase().indexOf("ANALYTICS") !== -1) {
+    if (results.response.toUpperCase().indexOf("HEADCOUNT") !== -1) {
         session.beginDialog('/Analytics');
     }
     else if (results.response.toUpperCase().indexOf("NO") != -1) {
@@ -82,7 +82,8 @@ function RootMenu(session,results) {
     }
     else if (results.response.toUpperCase().indexOf("YES") != -1) {
         session.beginDialog('/Analytics');
-    } else {
+    }
+    else {
         session.send("Not Trained...");
         session.beginDialog('/', {response: 'NU'});
     }
@@ -90,7 +91,7 @@ function RootMenu(session,results) {
 
 bot.dialog('/Analytics',[
     function (session,args) {
-        builder.Prompts.choice(session,"Please select a dashboard","FTM and YTD Analysis|Headcount and Spend Overview|Headcount Details|Headcount Overview|Top N Analysis",
+        builder.Prompts.choice(session,"Please select a dashboard","Top N Analysis - Spend|Headcount Overview|Headcount and Spend Overview|Headcount Details|FTM and YTD Analysis",
         {
             listStyle: builder.ListStyle.button,
             maxRetries: 2,
@@ -99,10 +100,12 @@ bot.dialog('/Analytics',[
     },
     function (session,results) {
         if (results.response == undefined) {
+            console.log("hi");
             session.endDialog();
             session.replaceDialog('/');
         }
         else {
+            console.log("hello");
             var option = results.response.entity;
             var cards = {};
             if (option.toUpperCase().indexOf("FTM AND YTD ANALYSIS") !== -1) {
